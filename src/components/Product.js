@@ -1,86 +1,166 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 
-const Product = () => {
+const Product = (
+    {
+        productId,
+        code,
+        title,
+        description,
+        primaryImageUrl,
+        assocProducts,
+        weight,
+        unit,
+        unitFull,
+        unitRatio,
+        unitAlt,
+        unitRatioAlt,
+        unitFullAlt,
+        priceRetail, 
+        priceRetailAlt,
+        priceGold,
+        priceGoldAlt, 
+        bonusAmount,
+        hasAlternateUnit,
+        isActive,
+        modified
+    }
+) => {
+    const [unitIsPackaging,setUnitIsPackaging] = useState(false);
+
+    // --------- RENDER --------------
+    const addModificator = (argPrimaryImageUrl) => {
+        let splitUrl = argPrimaryImageUrl.split(".");
+        splitUrl[1] = splitUrl[1]+"_220x220_1";
+        return `http:${splitUrl.join('.')}`
+    }
+
+    const renderAssociatedProducts = () => {
+        const arrayProducts = assocProducts.split(";");
+        arrayProducts.splice(-1,1);
+        let render = arrayProducts.map((productName, index) => {
+            let splitter = index===arrayProducts.length-1 ? "." : ","
+            if (productName) {
+                return (
+                        <a href="#" className="url--link"> {productName}{splitter}</a>
+                )
+            }
+        })
+        return render;
+    }
+
+    const renderProductUnits = () => {
+        let unit = false;
+        if (unitFull==="упаковка") {
+            unit = true;
+        }
+        return (
+                unit ?
+                    <>
+                        <div className="unit--select unit--active">
+                            <p className="ng-binding">За м. кв.</p>
+                        </div>
+                        <div className="unit--select">
+                            <p className="ng-binding">За упаковку</p>
+                        </div>
+                    </>
+                :
+                    <div className="unit--select unit--active">
+                        <p className="ng-binding">За штуку</p>
+                    </div>
+        )
+    }
+
+    const convertPrice = price => {
+        return ` ${price.toFixed(2).replace(".", ",")} `;
+    }
+
     return (
         <div id="products_section">
-            <div class="products_page pg_0">
-                <div class="product product_horizontal">                                
-                    <span class="product_code">Код: 147268</span>
-                    <div class="product_status_tooltip_container">
-                        <span class="product_status">Наличие</span>
+            <div className="products_page pg_0">
+                <div className="product product_horizontal">                                
+                    <span className="product_code">Код: {+code}</span>
+                    <div className="product_status_tooltip_container">
+                        <span className="product_status">Наличие</span>
                     </div>                                
-                    <div class="product_photo">
-                        <a href="#" class="url--link product__link">
-                            <img src="misc/df126-52f2-11e5-b9a9-00259036a192_220x220_1.jpg"/>
+                    <div className="product_photo">
+                        <a href="#" className="url--link product__link">
+                            <img src={addModificator(primaryImageUrl)} alt="photo"/>
                         </a>                                    
                     </div>
-                    <div class="product_description">
-                        <a href="#" class="product__link">Ламинат 31 кл Kronospan Kronofix Афцелия Малайская 2,47 м.кв. 7 мм</a>
+                    <div className="product_description">
+                        <a href="#" className="product__link">{title}</a>
                     </div>
-                    <div class="product_tags hidden-sm">
-                        <p>Могут понадобиться:</p>
-                        <a href="#" class="url--link">подложка,</a>
-                        <a href="#" class="url--link">плинтус натуральный,</a>
-                        <a href="#" class="url--link">рулетка,</a>
-                        <a href="#" class="url--link">набор для укладки ламината,</a>
-                        <a href="#" class="url--link">ножовка по ламинату,</a>
-                        <a href="#" class="url--link">гель для стыков ламината Clic Protect.</a>
+                    <div className="product_tags hidden-sm">
+                        <p>Могут понадобиться: </p>
+                         {renderAssociatedProducts()}
                     </div>
-                    <div class="product_units">
-                        <div class="unit--wrapper">
-                            <div class="unit--select unit--active">
-                                <p class="ng-binding">За м. кв.</p>
-                            </div>
-                            <div class="unit--select">
-                                <p class="ng-binding">За упаковку</p>
-                            </div>
+                    <div className="product_units">
+                        <div className="unit--wrapper">
+                           {renderProductUnits()}
                         </div>
                     </div>
-                    <p class="product_price_club_card">
-                        <span class="product_price_club_card_text">По карте<br/>клуба</span>
-                        <span class="goldPrice">375,71</span>
-                        <span class="rouble__i black__i">
+                    <p className="product_price_club_card">
+                        <span className="product_price_club_card_text">По карте<br/>клуба</span>
+                        <span className="goldPrice">  
+                            {
+                                !unitIsPackaging 
+                                    ? convertPrice(priceRetailAlt)
+                                    : convertPrice(priceGold)
+                            }
+                        </span>
+                        <span className="rouble__i black__i">
                             <svg version="1.0" id="rouble__b" xmlns="http://www.w3.org/2000/svg" x="0" y="0" width="30px" height="22px" viewBox="0 0 50 50" enable-background="new 0 0 50 50" xmlSpace="preserve">
                                 <use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#rouble_black"></use>
                             </svg>
                         </span>
                     </p>
-                    <p class="product_price_default">
-                        <span class="retailPrice">391,09</span>
-                        <span class="rouble__i black__i">
+                    <p className="product_price_default">
+                        <span className="retailPrice">
+                            {
+                                !unitIsPackaging 
+                                    ? convertPrice(priceGoldAlt)
+                                    : convertPrice(priceRetail)
+                            }
+                        </span>
+                        <span className="rouble__i black__i">
                             <svg version="1.0" id="rouble__g" xmlns="http://www.w3.org/2000/svg" x="0" y="0" width="30px" height="22px" viewBox="0 0 50 50" enable-background="new 0 0 50 50" xmlSpace="preserve">
                                 <use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#rouble_gray"></use>
                             </svg>
                         </span>
                     </p>
-                    <div class="product_price_points">
-                        <p class="ng-binding">Можно купить за 231,75 балла</p>
+                    <div className="product_price_points">
+                        <p className="ng-binding">Можно купить за 231,75 балла</p>
                     </div>
-                    <div class="list--unit-padd"></div>
-                    <div class="list--unit-desc">
-                        <div class="unit--info">
-                            <div class="unit--desc-i"></div>
-                            <div class="unit--desc-t">
-                                <p>
-                                    <span class="ng-binding">Продается упаковками:</span>
-                                    <span class="unit--infoInn">1 упак. = 2.47 м. кв. </span>
-                                </p>
+                    <div className="list--unit-padd"></div>
+                    {
+                        unitFull==="упаковка" ? 
+                            <div className="list--unit-desc">
+                                <div className="unit--info">
+                                    <div className="unit--desc-i"></div>
+                                    <div className="unit--desc-t">
+                                        <p>
+                                            <span className="ng-binding">Продается упаковками:</span>
+                                            <span className="unit--infoInn">1 упак. = 2.47 м. кв. </span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        :
+                            ""
+                    }   
+                    <div className="product__wrapper">
+                        <div className="product_count_wrapper">
+                            <div className="stepper">
+                                <input className="product__count stepper-input" type="text" value="1"/>
+                                <span className="stepper-arrow up"></span>
+                                <span className="stepper-arrow down"></span>                                            
                             </div>
                         </div>
-                    </div>
-                    <div class="product__wrapper">
-                        <div class="product_count_wrapper">
-                            <div class="stepper">
-                                <input class="product__count stepper-input" type="text" value="1"/>
-                                <span class="stepper-arrow up"></span>
-                                <span class="stepper-arrow down"></span>                                            
-                            </div>
-                        </div>
-                        <span class="btn btn_cart" data-url="/cart/" data-product-id="9bf0afd7-5190-11e5-b9a9-00259036a192">
-                            <svg class="ic ic_cart">
+                        <span className="btn btn_cart" data-url="/cart/" data-product-id={productId}>
+                            <svg className="ic ic_cart">
                                 <use xmlnsXlink="http://www.w3.org/1999/xlink" xlinkHref="#cart"></use>
                             </svg>
-                            <span class="ng-binding">В корзину</span>
+                            <span className="ng-binding">В корзину</span>
                         </span>
                     </div>
                 </div>
