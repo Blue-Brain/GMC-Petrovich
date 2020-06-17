@@ -26,6 +26,7 @@ const Product = (
     }
 ) => {
     const [unitIsPackaging,setUnitIsPackaging] = useState(false);
+    const refNumberProduct = useRef(null);
 
     // --------- RENDER --------------
     const addModificator = (argPrimaryImageUrl) => {
@@ -72,6 +73,18 @@ const Product = (
 
     const convertPrice = price => {
         return ` ${price.toFixed(2).replace(".", ",")} `;
+    }
+
+    // --------- CLICK --------------
+
+    const incrementNumberProduct = () => {
+        refNumberProduct.current.value = ++refNumberProduct.current.value
+    }
+
+    const decrementNumberProduct = () => {
+        if (refNumberProduct.current.value>1) {
+            refNumberProduct.current.value = --refNumberProduct.current.value
+        }
     }
 
     return (
@@ -151,9 +164,9 @@ const Product = (
                     <div className="product__wrapper">
                         <div className="product_count_wrapper">
                             <div className="stepper">
-                                <input className="product__count stepper-input" type="text" value="1"/>
-                                <span className="stepper-arrow up"></span>
-                                <span className="stepper-arrow down"></span>                                            
+                                <input className="product__count stepper-input" type="text" value="1" ref={refNumberProduct}/>
+                                <span className="stepper-arrow up" onClick={()=>incrementNumberProduct()}></span>
+                                <span className="stepper-arrow down" onClick={()=>decrementNumberProduct()}></span>                                            
                             </div>
                         </div>
                         <span className="btn btn_cart" data-url="/cart/" data-product-id={productId}>
