@@ -10,7 +10,7 @@ const Product = ({
   priceRetail,
   priceRetailAlt,
   priceGold,
-  priceGoldAlt
+  priceGoldAlt,
 }) => {
   const [unitIsPackaging, setUnitIsPackaging] = useState(false);
   const refNumberProduct = useRef(null);
@@ -18,6 +18,11 @@ const Product = ({
   const refPackaging = useRef(null);
 
   // --------- RENDER --------------
+  const generateBonusPoint = () => {
+    let random = Math.random();
+    return (+random * 1000).toFixed(2);
+  };
+
   const addModificator = (argPrimaryImageUrl) => {
     let splitUrl = argPrimaryImageUrl.split(".");
     splitUrl[1] = splitUrl[1] + "_220x220_1";
@@ -176,7 +181,9 @@ const Product = ({
             </span>
           </p>
           <div className="product_price_points">
-            <p className="ng-binding">Можно купить за 231,75 балла</p>
+            <p className="ng-binding">
+              Можно купить за {generateBonusPoint()} балла
+            </p>
           </div>
           <div className="list--unit-padd"></div>
           {unitFull === "упаковка" ? (
